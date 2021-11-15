@@ -49,6 +49,8 @@ if(nfd_PLATFORM STREQUAL PLATFORM_LINUX)
       PRIVATE ${DBUS_INCLUDE_DIRS})
     target_link_libraries(${TARGET_NAME}
       PRIVATE ${DBUS_LIBRARIES})
+    target_compile_definitions(${TARGET_NAME}
+      PUBLIC NFD_PORTAL)
   endif()
 endif()
 
@@ -64,7 +66,7 @@ if(nfd_COMPILER STREQUAL COMPILER_MSVC)
 endif()
 
 if(nfd_COMPILER STREQUAL COMPILER_GNU)
-  target_compile_options(${TARGET_NAME} PRIVATE -nostdlib -fno-exceptions -fno-rtti)
+  target_compile_options(${TARGET_NAME} PRIVATE -nostdlib -fno-exceptions -fno-rtti -g -O0)
 endif()
 
 set_target_properties(${TARGET_NAME} PROPERTIES PUBLIC_HEADER "${PUBLIC_HEADER_FILES}")
