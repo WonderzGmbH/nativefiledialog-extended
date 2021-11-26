@@ -56,4 +56,4 @@ jobs:
       with:
         name: mac
         path: |
-          install/lib/*
+          install/bin/*
