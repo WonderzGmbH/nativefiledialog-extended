@@ -236,7 +236,7 @@ nfdresult_t NFD_SaveDialogN(nfdnchar_t** outPath,
     return result;
 }
 
-nfdresult_t NFD_PickFolderN(nfdnchar_t** outPath, const nfdnchar_t* defaultPath) {
+nfdresult_t NFD_PickFolderN_MainThread(nfdnchar_t** outPath, const nfdnchar_t* defaultPath) {
     nfdresult_t result = NFD_CANCEL;
     @autoreleasepool {
         NSWindow* keyWindow = [[NSApplication sharedApplication] keyWindow];
@@ -259,6 +259,14 @@ nfdresult_t NFD_PickFolderN(nfdnchar_t** outPath, const nfdnchar_t* defaultPath)
         // return focus to the key window (i.e. main window)
         [keyWindow makeKeyAndOrderFront:nil];
     }
+    return result;
+}
+
+nfdresult_t NFD_PickFolderN(nfdnchar_t** outPath, const nfdnchar_t* defaultPath) {
+    __block nfdresult_t result = NFD_CANCEL;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        result = NFD_PickFolderN_MainThread(outPath, defaultPath);
+    });
     return result;
 }
 
