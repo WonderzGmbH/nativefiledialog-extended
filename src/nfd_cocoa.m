@@ -137,7 +137,7 @@ void NFD_Quit(void) {
     [[NSApplication sharedApplication] setActivationPolicy:old_app_policy];
 }
 
-nfdresult_t NFD_OpenDialogN(nfdnchar_t** outPath,
+nfdresult_t NFD_OpenDialogN_MainThread(nfdnchar_t** outPath,
                             const nfdnfilteritem_t* filterList,
                             nfdfiltersize_t filterCount,
                             const nfdnchar_t* defaultPath) {
@@ -166,7 +166,18 @@ nfdresult_t NFD_OpenDialogN(nfdnchar_t** outPath,
     return result;
 }
 
-nfdresult_t NFD_OpenDialogMultipleN(const nfdpathset_t** outPaths,
+nfdresult_t NFD_OpenDialogN(nfdnchar_t** outPath,
+                            const nfdnfilteritem_t* filterList,
+                            nfdfiltersize_t filterCount,
+                            const nfdnchar_t* defaultPath) {
+    __block nfdresult_t result = NFD_CANCEL;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        result = NFD_OpenDialogN_MainThread(outPath, filterList, filterCount, defaultPath);
+    });
+    return result;
+}
+
+nfdresult_t NFD_OpenDialogMultipleN_MainThread(const nfdpathset_t** outPaths,
                                     const nfdnfilteritem_t* filterList,
                                     nfdfiltersize_t filterCount,
                                     const nfdnchar_t* defaultPath) {
@@ -200,7 +211,18 @@ nfdresult_t NFD_OpenDialogMultipleN(const nfdpathset_t** outPaths,
     return result;
 }
 
-nfdresult_t NFD_SaveDialogN(nfdnchar_t** outPath,
+nfdresult_t NFD_OpenDialogMultipleN(const nfdpathset_t** outPaths,
+                                    const nfdnfilteritem_t* filterList,
+                                    nfdfiltersize_t filterCount,
+                                    const nfdnchar_t* defaultPath) {
+    __block nfdresult_t result = NFD_CANCEL;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        result = NFD_OpenDialogMultipleN_MainThread(outPaths, filterList, filterCount, defaultPath);
+    });
+    return result;
+}
+
+nfdresult_t NFD_SaveDialogN_MainThread(nfdnchar_t** outPath,
                             const nfdnfilteritem_t* filterList,
                             nfdfiltersize_t filterCount,
                             const nfdnchar_t* defaultPath,
@@ -233,6 +255,18 @@ nfdresult_t NFD_SaveDialogN(nfdnchar_t** outPath,
         // return focus to the key window (i.e. main window)
         [keyWindow makeKeyAndOrderFront:nil];
     }
+    return result;
+}
+
+nfdresult_t NFD_SaveDialogN(nfdnchar_t** outPath,
+                            const nfdnfilteritem_t* filterList,
+                            nfdfiltersize_t filterCount,
+                            const nfdnchar_t* defaultPath,
+                            const nfdnchar_t* defaultName) {
+    __block nfdresult_t result = NFD_CANCEL;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        result = NFD_SaveDialogN_MainThread(outPath, filterList, filterCount, defaultPath, defaultName);
+    });
     return result;
 }
 
